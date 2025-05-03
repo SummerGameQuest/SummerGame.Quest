@@ -270,7 +270,7 @@
         });
 
         const countdownElement = document.getElementById('countdown');
-        const endDate = new Date('2025-05-15T00:00:00').getTime();
+        const endDate = new Date('2025-10-01T00:00:00').getTime();
 
         function updateCountdown() {
             const now = new Date().getTime();
@@ -281,11 +281,11 @@
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            countdownElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            countdownElement.innerHTML = `Ends in ${days}d ${hours}h ${minutes}m ${seconds}s`;
 
             if (distance < 0) {
                 clearInterval(countdownTimer);
-                countdownElement.innerHTML = "Game Jam Has Started!";
+                countdownElement.innerHTML = "Game Jam Has Finished!";
             }
         }
 
