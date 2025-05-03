@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ctext x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='90'%3E%F0%9F%98%8E%3C/text%3E%3C/svg%3E">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ctext x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='90'%3E%F0%9F%8F%84%3C/text%3E%3C/svg%3E">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ctext x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='90'%3E%F0%9F%8F%96%EF%B8%8F%3C/text%3E%3C/svg%3E">
+
+    <title>Summer Game Quest</title>
+    <style>
+        :root {
+            --sky-color-top: #87CEEB;
+            --sky-color-bottom: #1E90FF;
+            --sun-color: #FFD700;
+            --sun-opacity: 1;
+            --stars-opacity: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #FFFFFF;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(to bottom,
+                var(--sky-color-top),
+                var(--sky-color-bottom));
+            transition: all 2s linear;
+        }
+
+        .container {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .restrictions ul {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            padding: 0;
+            list-style: none;
+        }
+
+        .restrictions li {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+            white-space: nowrap;
+        }
+
+
+        .countdown {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+        }
+
+        .sun {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: var(--sun-color);
+            border-radius: 50%;
+            box-shadow: 0 0 50px var(--sun-color);
+            opacity: var(--sun-opacity);
+            animation: pulse 2s infinite alternate;
+            transition: all 2s linear;
+            z-index: 1;
+        }
+
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: var(--stars-opacity);
+            transition: opacity 2s linear;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 1s infinite alternate;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.2; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%230099ff" fill-opacity="0.5" d="M0,128L48,154.7C96,181,192,235,288,234.7C384,235,480,181,576,170.7C672,160,768,192,864,186.7C960,181,1056,139,1152,122.7C1248,107,1344,117,1392,122.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            animation: wave 10s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes wave {
+            0% { background-position-x: 0; }
+            100% { background-position-x: 1440px; }
+        }
+
+        .time-control {
+            position: fixed;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            z-index: 2;
+        }
+
+        .time-control.visible {
+            display: block;
+        }
+
+        .time-slider {
+            width: 300px;
+            margin: 10px 0;
+        }
+
+        .time-display {
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="stars-container" id="starsContainer"></div>
+    <div class="sun"></div>
+    <div class="container">
+        <h1>Summer Game Quest</h1>
+        <div class="restrictions">
+            <p>Themes:</p>
+            <ul id="themeList">
+                <li>Finishable</li>
+            </ul>
+            <p>Restrictions: </p>
+            <ul id="restrictionsList"></ul>
+        </div>
+        <div class="countdown" id="countdown"></div>
+    </div>
+    <div class="time-control" id="timeControl">
+        <input type="range" min="0" max="1440" value="720" class="time-slider" id="timeSlider">
+        <div class="time-display" id="timeDisplay">12:00</div>
+    </div>
+    <div class="wave"></div>
+    <script>
+        // Enum for mode selection
+        const Mode = {
+            DEBUG: 'debug',
+            AUTO_CYCLE: 'autoCycle',
+            REAL_TIME: 'realTime'
+        };
+
+        // Configuration
+        const SELECTED_MODE = Mode.AUTO_CYCLE;
+        const CYCLE_DURATION = 120; // Complete day/night cycle duration in seconds
+
+        // Timing variables
+        let startTime = Date.now();
+        let lastFrameTime = startTime;
+        let currentCyclePosition = 0;
+        let cycleSpeedMultiplier = 1;
+        let animationFrameId = null;
+
+        // Create stars
+        function createStars() {
+            const starsContainer = document.getElementById('starsContainer');
+            const numStars = 200;
+
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+
+                const size = Math.random() * 2 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+
+                star.style.animationDelay = `${Math.random() * 2}s`;
+
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Create stars on load
+        createStars();
+
+        const restrictions = [
+            "🤷‍♂️ TBD 🏄",
+            "AI Suggestion: Main character must be a sea creature",
+            "AI Suggestion: Incorporate a day/night cycle"
+        ];
+
+        const restrictionsList = document.getElementById('restrictionsList');
+        restrictions.forEach(restriction => {
+            const li = document.createElement('li');
+            li.textContent = restriction;
+            restrictionsList.appendChild(li);
+        });
+
+        const countdownElement = document.getElementById('countdown');
+        const endDate = new Date('2025-07-01T00:00:00').getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = endDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            countdownElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+            if (distance < 0) {
+                clearInterval(countdownTimer);
+                countdownElement.innerHTML = "Game Jam Has Started!";
+            }
+        }
+
+        const countdownTimer = setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // Color manipulation functions
+        function interpolateColor(color1, color2, factor) {
+            const result = color1.slice();
+            for (let i = 0; i < 3; i++) {
+                result[i] = Math.round(result[i] + factor * (color2[i] - color1[i]));
+            }
+            return result;
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? [
+                parseInt(result[1], 16),
+                parseInt(result[2], 16),
+                parseInt(result[3], 16)
+            ] : null;
+        }
+
+        function rgbToHex(rgb) {
+            return '#' + rgb.map(x => {
+                const hex = x.toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            }).join('');
+        }
+
+        const timePoints = [
+            { time: 0,    colors: ['#0a1a2a', '#1c3a5a'], sunColor: '#e6e6e6', sunOpacity: 0.2, starsOpacity: 1.0 },  // Midnight
+            { time: 300,  colors: ['#0a1a2a', '#1c3a5a'], sunColor: '#e6e6e6', sunOpacity: 0.2, starsOpacity: 1.0 },  // 5 AM
+            { time: 330,  colors: ['#1a1a3a', '#4a1635'], sunColor: '#ff9aa0', sunOpacity: 0.3, starsOpacity: 0.8 },  // 5:30 AM - Pre-dawn
+            { time: 360,  colors: ['#4a1635', '#ff6b6b'], sunColor: '#ff7e6b', sunOpacity: 0.5, starsOpacity: 0.6 },  // 6 AM - Dawn begins
+            { time: 390,  colors: ['#ff6b6b', '#ffd4a0'], sunColor: '#ffb347', sunOpacity: 0.6, starsOpacity: 0.4 },  // 6:30 AM - Sunrise
+            { time: 420,  colors: ['#ff9a76', '#ffd4a0'], sunColor: '#ffd700', sunOpacity: 0.8, starsOpacity: 0.2 },  // 7 AM - Early morning
+            { time: 450,  colors: ['#ffb347', '#87CEEB'], sunColor: '#ffd700', sunOpacity: 0.9, starsOpacity: 0.0 },  // 7:30 AM - Morning transition
+            { time: 480,  colors: ['#87CEEB', '#1E90FF'], sunColor: '#ffd700', sunOpacity: 1.0, starsOpacity: 0.0 },  // 8 AM - Full day
+            { time: 1020, colors: ['#87CEEB', '#1E90FF'], sunColor: '#ffd700', sunOpacity: 1.0, starsOpacity: 0.0 },  // 5 PM - Late afternoon
+            { time: 1050, colors: ['#87CEEB', '#ff9a76'], sunColor: '#ff8c00', sunOpacity: 0.9, starsOpacity: 0.0 },  // 5:30 PM - Pre-sunset
+            { time: 1080, colors: ['#ff9a76', '#ff6b6b'], sunColor: '#ff4500', sunOpacity: 0.8, starsOpacity: 0.2 },  // 6 PM - Sunset begins
+            { time: 1110, colors: ['#ff6b6b', '#4a1635'], sunColor: '#ff4500', sunOpacity: 0.6, starsOpacity: 0.4 },  // 6:30 PM - Sunset
+            { time: 1140, colors: ['#4a1635', '#2a1635'], sunColor: '#ff2d00', sunOpacity: 0.4, starsOpacity: 0.6 },  // 7 PM - Late sunset
+            { time: 1170, colors: ['#2a1635', '#1a1a3a'], sunColor: '#e6e6e6', sunOpacity: 0.3, starsOpacity: 0.8 },  // 7:30 PM - Dusk
+            { time: 1200, colors: ['#0a1a2a', '#1c3a5a'], sunColor: '#e6e6e6', sunOpacity: 0.2, starsOpacity: 1.0 },  // 8 PM - Night
+            { time: 1440, colors: ['#0a1a2a', '#1c3a5a'], sunColor: '#e6e6e6', sunOpacity: 0.2, starsOpacity: 1.0 }   // Midnight
+        ];
+
+        function updateSkyColor(totalMinutes = null) {
+            if (totalMinutes === null) {
+                switch (SELECTED_MODE) {
+                    case Mode.DEBUG:
+                        totalMinutes = parseInt(timeSlider.value);
+                        break;
+                    case Mode.AUTO_CYCLE:
+                        const currentTime = Date.now();
+                        const deltaTime = (currentTime - lastFrameTime) / 1000;
+                        lastFrameTime = currentTime;
+
+                        currentCyclePosition = (currentCyclePosition +
+                            (deltaTime / CYCLE_DURATION * cycleSpeedMultiplier)) % 1;
+                        totalMinutes = currentCyclePosition * 1440;
+                        break;
+                    case Mode.REAL_TIME:
+                        const now = new Date();
+                        totalMinutes = now.getHours() * 60 + now.getMinutes();
+                        break;
+                }
+            }
+
+            // Find the two timePoints to interpolate between
+            let startPoint = timePoints[0];
+            let endPoint = timePoints[1];
+
+            for (let i = 0; i < timePoints.length - 1; i++) {
+                if (totalMinutes >= timePoints[i].time && totalMinutes < timePoints[i + 1].time) {
+                    startPoint = timePoints[i];
+                    endPoint = timePoints[i + 1];
+                    break;
+                }
+            }
+
+            // Calculate interpolation factor
+            const factor = (totalMinutes - startPoint.time) / (endPoint.time - startPoint.time);
+
+            // Interpolate colors
+            const topColor1 = hexToRgb(startPoint.colors[0]);
+            const topColor2 = hexToRgb(endPoint.colors[0]);
+            const bottomColor1 = hexToRgb(startPoint.colors[1]);
+            const bottomColor2 = hexToRgb(endPoint.colors[1]);
+            const sunColor1 = hexToRgb(startPoint.sunColor);
+            const sunColor2 = hexToRgb(endPoint.sunColor);
+
+            const topColor = rgbToHex(interpolateColor(topColor1, topColor2, factor));
+            const bottomColor = rgbToHex(interpolateColor(bottomColor1, bottomColor2, factor));
+            const sunColor = rgbToHex(interpolateColor(sunColor1, sunColor2, factor));
+            const sunOpacity = startPoint.sunOpacity + (endPoint.sunOpacity - startPoint.sunOpacity) * factor;
+            const starsOpacity = startPoint.starsOpacity + (endPoint.starsOpacity - startPoint.starsOpacity) * factor;
+
+            // Update CSS variables
+            document.documentElement.style.setProperty('--sky-color-top', topColor);
+            document.documentElement.style.setProperty('--sky-color-bottom', bottomColor);
+            document.documentElement.style.setProperty('--sun-color', sunColor);
+            document.documentElement.style.setProperty('--sun-opacity', sunOpacity);
+            document.documentElement.style.setProperty('--stars-opacity', starsOpacity);
+
+            // Update sun position
+            const sun = document.querySelector('.sun');
+            const sunPosition = (totalMinutes % 1440) / 1440;
+            const sunX = Math.sin(sunPosition * Math.PI * 2) * 40 + 50;
+            const sunY = -Math.cos(sunPosition * Math.PI * 2) * 40 + 50;
+            sun.style.left = `${sunX}%`;
+            sun.style.top = `${sunY}%`;
+
+            // Update time display if in debug mode
+            if (SELECTED_MODE === Mode.DEBUG) {
+                timeDisplay.textContent = formatTime(totalMinutes);
+            }
+        }
+
+        function formatTime(minutes) {
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            const period = hours >= 12 ? 'PM' : 'AM';
+            const displayHours = hours % 12 || 12;
+            return `${displayHours}:${mins.toString().padStart(2, '0')} ${period}`;
+        }
+
+        function resetCycle() {
+            currentCyclePosition = 0;
+            lastFrameTime = Date.now();
+            cycleSpeedMultiplier = 1;
+            console.log('Cycle reset');
+        }
+
+        function setCycleTime(timeInMinutes) {
+            currentCyclePosition = (timeInMinutes / 1440) % 1;
+            lastFrameTime = Date.now();
+            console.log(`Cycle set to ${formatTime(timeInMinutes)}`);
+        }
+
+        function stopCycle() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+        }
+
+        function animateCycle() {
+            updateSkyColor();
+            if (SELECTED_MODE === Mode.AUTO_CYCLE) {
+                animationFrameId = requestAnimationFrame(animateCycle);
+            }
+        }
+
+        function jumpToTime(timeString) {
+            switch(timeString) {
+                case 'sunrise':
+                    setCycleTime(360); // 6 AM
+                    break;
+                case 'morning':
+                    setCycleTime(420); // 7 AM
+                    break;
+                case 'sunset':
+                    setCycleTime(1080); // 6 PM
+                    break;
+                case 'dusk':
+                    setCycleTime(1170); // 7:30 PM
+                    break;
+            }
+        }
+
+        // Debug controls
+        window.addEventListener('keydown', (e) => {
+            if (SELECTED_MODE === Mode.AUTO_CYCLE) {
+                switch(e.key) {
+                    case 'r':
+                        resetCycle();
+                        break;
+                    case 'n':
+                        setCycleTime(720); // Noon
+                        break;
+                    case 'm':
+                        setCycleTime(0);   // Midnight
+                        break;
+                    case 's':
+                        cycleSpeedMultiplier = cycleSpeedMultiplier === 1 ? 10 : 1;
+                        console.log(`Cycle speed: ${cycleSpeedMultiplier}x`);
+                        break;
+                    case '1':
+                        jumpToTime('sunrise');
+                        break;
+                    case '2':
+                        jumpToTime('morning');
+                        break;
+                    case '3':
+                        jumpToTime('sunset');
+                        break;
+                    case '4':
+                        jumpToTime('dusk');
+                        break;
+                }
+            }
+        });
+
+        // Speed control with mouse wheel
+        window.addEventListener('wheel', (e) => {
+            if (SELECTED_MODE === Mode.AUTO_CYCLE && e.ctrlKey) {
+                // cycleSpeedMultiplier = Math.max(0.1, Math.min(10,
+                //     cycleSpeedMultiplier + (e.deltaY > 0 ? -0.1 : 0.1)));
+                cycleSpeedMultiplier = Math.max(0.1,
+                    cycleSpeedMultiplier + (e.deltaY > 0 ? -0.1 : 0.1));
+                console.log(`Cycle speed: ${cycleSpeedMultiplier}x`);
+                e.preventDefault();
+            }
+        });
+
+        // Handle tab visibility
+        document.addEventListener('visibilitychange', () => {
+            if (SELECTED_MODE === Mode.AUTO_CYCLE) {
+                if (document.hidden) {
+                    stopCycle();
+                } else {
+                    lastFrameTime = Date.now();
+                    animateCycle();
+                }
+            }
+        });
+
+        const timeControl = document.getElementById('timeControl');
+        const timeSlider = document.getElementById('timeSlider');
+        const timeDisplay = document.getElementById('timeDisplay');
+
+        // Show/hide time control based on selected mode
+        if (SELECTED_MODE === Mode.DEBUG) {
+            timeControl.classList.add('visible');
+        }
+
+        // Event listener for the time slider
+        timeSlider.addEventListener('input', () => {
+            updateSkyColor(parseInt(timeSlider.value));
+        });
+
+        // Initialize based on selected mode
+        switch (SELECTED_MODE) {
+            case Mode.DEBUG:
+                updateSkyColor(720); // Start at noon
+                break;
+            case Mode.AUTO_CYCLE:
+                animateCycle();
+                break;
+            case Mode.REAL_TIME:
+                setInterval(updateSkyColor, 1000);
+                updateSkyColor();
+                break;
+        }
+    </script>
+
+</body>
+</html>
