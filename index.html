@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ctext x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='90'%3E%F0%9F%98%8E%3C/text%3E%3C/svg%3E">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ctext x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='90'%3E%F0%9F%8F%84%3C/text%3E%3C/svg%3E">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ctext x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='90'%3E%F0%9F%8F%96%EF%B8%8F%3C/text%3E%3C/svg%3E">
@@ -15,6 +16,17 @@
             --sun-color: #FFD700;
             --sun-opacity: 1;
             --stars-opacity: 0;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -webkit-overflow-scrolling: touch;
+            overflow-x: hidden;
+            width: 100%;
         }
 
         body {
@@ -31,6 +43,8 @@
                 var(--sky-color-top),
                 var(--sky-color-bottom));
             transition: all 2s linear;
+            background-attachment: fixed;
+            height: 100%;
         }
 
         .container {
